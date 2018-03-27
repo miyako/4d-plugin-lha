@@ -13,7 +13,11 @@ Parameter|Type|Description
 ------------|------------|----
 src|TEXT|
 dst|TEXT|
-paths|ARRAY TEXT|on input, ``glob`` style filters; on output, extracted paths (system)
+paths|ARRAY TEXT|on input, ``glob`` style filters; on output, extracted paths
+
+All paths in system style (HFS on macOS).
+
+Source (i.e. not target) path is returned for symbolic links.
 
 ### Examples
 
