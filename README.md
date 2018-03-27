@@ -42,3 +42,16 @@ $paths{1}:="*.jpg"  //extract jpg files
 
 LHA ($src;$dst;$paths)
 ```
+
+### Error Codes
+
+```c
+typedef enum
+{
+	lha_error_none = 0,
+	lha_error_extract_archive = 1,
+	lha_error_fopen = 2,
+	lha_error_input_stream_from_file = 3,
+	lha_error_reader_new = 4
+}lha_error_t;
+```
