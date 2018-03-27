@@ -13,7 +13,7 @@ Parameter|Type|Description
 ------------|------------|----
 src|TEXT|
 dst|TEXT|
-paths|ARRAY TEXT|on input, ``glob`` style filters. on output, extract paths
+paths|ARRAY TEXT|on input, ``glob`` style filters; on output, extracted paths (system)
 
 ### Examples
 
