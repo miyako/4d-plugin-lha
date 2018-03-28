@@ -62,7 +62,16 @@ void _cb(char *filename, void *array)
 	}
 	[s release];
 #else
-	
+	int error = 0;
+	int size = strlen(filename);
+	int len = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)filename, size, NULL, 0);
+	if (len) 
+	{
+		std::vector<char> buf((len + 1) * sizeof(wchar_t));
+		if (MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)filename, size, (LPWSTR)&buf[0], len)) {
+			arr->appendUTF16String((const PA_Unichar *)&buf[0]);
+		}
+	}
 #endif
 }
 
@@ -103,8 +112,15 @@ void LHA(sLONG_PTR *pResult, PackagePtr pParams)
 	options.dry_run = 0;
 	options.extract_path = (char *)dst.c_str();
 	options.use_path = 1;
-	
+#if VERSIONWIN
+	FILE *fstream = NULL;
+	wchar_t	buf[_MAX_PATH];
+	if (MultiByteToWideChar(CP_UTF8, 0, (const char *)src.c_str(), -1, (LPWSTR)buf, _MAX_PATH))
+		fstream = _wfopen((const wchar_t *)buf, L"rb");
+#else
 	FILE *fstream = fopen((char *)src.c_str(), "rb");
+#endif
+
 	if(fstream)
 	{
 		LHAInputStream *stream = lha_input_stream_from_FILE(fstream);

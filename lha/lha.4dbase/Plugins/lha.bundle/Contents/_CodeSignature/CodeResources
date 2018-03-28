@@ -4,6 +4,10 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Resources/COPYING</key>
+		<data>
+		gL7XvpQ2rNI3bNEMtBVvEMOB2jI=
+		</data>
 		<key>Resources/Documentation/images/Field_0.png</key>
 		<data>
 		tiDJoel4B9Su5Vc6F5vwnss1hxA=
@@ -121,6 +125,17 @@
 			<key>hash2</key>
 			<data>
 			98jKbUnZvoNXKS37m5JUoBfuRCxC2JzhKP+uHKV6WFc=
+			</data>
+		</dict>
+		<key>Resources/COPYING</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			gL7XvpQ2rNI3bNEMtBVvEMOB2jI=
+			</data>
+			<key>hash2</key>
+			<data>
+			x9AVw/UBgFcXm7UpKIdbVyogqoMVPyMgtFUjdihRB5E=
 			</data>
 		</dict>
 		<key>Resources/Documentation/images/Field_0.png</key>
@@ -404,22 +419,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			8WH79l2tgViHfCYSUBu+HCIQ5Es=
+			Z2I3oHy3CzXRUizGqiTv1RJrE1I=
 			</data>
 			<key>hash2</key>
 			<data>
-			rp5mwPoToTOMBrO5g9ATVRBDkkR1XpJE6MF06FX5mo0=
+			13kT2sTpvPrQ3vB5u39RTg9PyMCZIeRD45Z5cX+TZtQ=
 			</data>
 		</dict>
 		<key>Windows64/lha.4DX</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			r1aAHLsl1HqPOxOjnnlVMBT8weQ=
+			oWmB7+XyzTWcp+l8UAAhzqZmtdg=
 			</data>
 			<key>hash2</key>
 			<data>
-			D81BlAXC8IYBjKsGDu0nx8Zm3OxlDG6/r2pFvj/FY7A=
+			5jXw84lBRMuEzdV9X/agVp4olQ3kCTZOXLAd/esaH08=
 			</data>
 		</dict>
 		<key>manifest.json</key>

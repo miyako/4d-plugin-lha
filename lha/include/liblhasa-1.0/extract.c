@@ -78,7 +78,13 @@ static char *file_full_path(LHAFileHeader *header, LHAOptions *options)
 
 	if (options->extract_path != NULL) {
 		strcat(result, options->extract_path);
-		strcat(result, "/");
+#ifdef _WIN32
+		if(result[strlen(options->extract_path)-1] != '\\')
+			strcat(result, "\\");
+#else
+		if (result[strlen(options->extract_path) - 1] != '/')
+			strcat(result, "/");
+#endif
 	}
 
 	// Add path. If it is an absolute path (contains a leading '/')
@@ -107,7 +113,15 @@ static char *file_full_path(LHAFileHeader *header, LHAOptions *options)
 		}
 		strcat(result, p);
 	}
-
+#ifdef _WIN32
+	p = result;
+	for (unsigned int i = 0; i < strlen(result); ++i) {
+		if (*p == '/') {
+			*p = '\\';
+		}
+		++p;
+	}
+#endif
 	return result;
 }
 
@@ -296,19 +310,33 @@ static int make_parent_directories(char *orig_path)
 
 	p = path + strlen(path) - 1;
 
-	while (p >= path && *p == '/') {
+#ifdef _WIN32
+	while (p >= path && *p == '\\') {
 		*p = '\0';
 		--p;
 	}
+#else
+	while (p >= path && *p == '/') {
+		*p = '\0';
+		--p;
+}
+#endif
 
 	// Iterate through the string, finding each path separator. At
 	// each place, temporarily chop off the end of the path to get
 	// each parent directory in turn.
-
+#ifdef _WIN32
+	for (p = path; *p == '\\'; ++p);
+#else
 	for (p = path; *p == '/'; ++p);
+#endif
 
 	for (;;) {
+#ifdef _WIN32
+		p = strchr(p, '\\');
+#else
 		p = strchr(p, '/');
+#endif
 
 		if (p == NULL) {
 			break;
@@ -324,8 +352,11 @@ static int make_parent_directories(char *orig_path)
 		}
 
 		// Restore path separator and advance to the next path.
-
+#ifdef _WIN32
+		*p = '\\';
+#else
 		*p = '/';
+#endif
 		++p;
 	}
 

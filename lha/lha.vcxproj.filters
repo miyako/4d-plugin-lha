@@ -72,6 +72,10 @@
     <ClCompile Include="4D Plugin API\Classes\ARRAY_TIME.cpp">
       <Filter>Source\4D Plugin API\Classes\ARRAY</Filter>
     </ClCompile>
+    <ClCompile Include="include\liblhasa-1.0\safe.c" />
+    <ClCompile Include="include\liblhasa-1.0\extract.c" />
+    <ClCompile Include="include\liblhasa-1.0\filter.c" />
+    <ClCompile Include="include\liblhasa-1.0\lha_arch_win32.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="4DPlugin.h">
@@ -140,6 +144,9 @@
     <ClInclude Include="4D Plugin API\Classes\ARRAY_TIME.h">
       <Filter>Source\4D Plugin API\Classes\ARRAY</Filter>
     </ClInclude>
+    <ClInclude Include="include\liblhasa-1.0\safe.h" />
+    <ClInclude Include="include\liblhasa-1.0\extract.h" />
+    <ClInclude Include="include\liblhasa-1.0\filter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="4D Plugin API\4DPluginAPI.def">
