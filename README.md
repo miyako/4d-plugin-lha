@@ -19,7 +19,7 @@ Decompress LZH
 
 ### Remarks
 
-Unicode paths on Windows is not supported (ANSI API is used for ``fopen``, CreateDirectoryA``, etc.)
+Unicode paths on Windows is not supported (ANSI API is used for ``fopen``, ``CreateDirectoryA``, etc.)
 
 ## Syntax
 
