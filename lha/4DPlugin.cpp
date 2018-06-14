@@ -145,7 +145,14 @@ void LHA(sLONG_PTR *pResult, PackagePtr pParams)
 				}
 				
 				LHAFilter filter;
-				lha_filter_init(&filter, reader, &filters[0], num_filters);
+				filter.num_filters = 0;
+				filter.reader = reader;
+				filter.filters = NULL;
+				
+				if(num_filters)
+				{
+					lha_filter_init(&filter, reader, &filters[0], num_filters);
+				}
 				
 				void (*_PA_YieldAbsolute)(void) = PA_YieldAbsolute;
 				Param3o.setSize(1);
