@@ -41,12 +41,12 @@ void CommandDispatcher (PA_long32 pProcNum, sLONG_PTR *pResult, PackagePtr pPara
 	}
 }
 
+#pragma mark -
+
 // -------------------------------------- lha -------------------------------------
 
-void _cb(char *filename, void *array)
+void copyPath(char *filename, CUTF16String *path)
 {
-	ARRAY_TEXT *arr = (ARRAY_TEXT *)array;
-	
 	/* convert to HFS */
 #if VERSIONMAC
 	C_TEXT t;
@@ -56,7 +56,8 @@ void _cb(char *filename, void *array)
 	if(u)
 	{
 		NSString *str = (NSString *)CFURLCopyFileSystemPath((CFURLRef)u, kCFURLHFSPathStyle);
-		arr->appendUTF16String(str);
+		t.setUTF16String(str);
+		t.copyUTF16String(path);
 		[str release];
 		[u release];
 	}
@@ -65,14 +66,31 @@ void _cb(char *filename, void *array)
 	int error = 0;
 	int size = strlen(filename);
 	int len = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)filename, size, NULL, 0);
-	if (len) 
+	if (len)
 	{
 		std::vector<char> buf((len + 1) * sizeof(wchar_t));
 		if (MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)filename, size, (LPWSTR)&buf[0], len)) {
-			arr->appendUTF16String((const PA_Unichar *)&buf[0]);
+			t.setUTF16String((const PA_Unichar *)&buf[0], len);
+			t.copyUTF16String(path);
 		}
 	}
 #endif
+}
+
+void PA_YieldAbsolute2()
+{
+	PA_Variable	params;
+	PA_ExecuteCommandByID(311, &params, 0);/* IDLE */
+}
+
+void _cb2(char *filename, void *array)
+{
+	JSONNODE *arr = (JSONNODE *)array;
+	
+	CUTF16String path;
+	copyPath(filename, &path);
+	
+	json_push_back_s(arr, &path);
 }
 
 typedef enum
@@ -88,15 +106,16 @@ void LHA(sLONG_PTR *pResult, PackagePtr pParams)
 {
 	C_TEXT Param1;
 	C_TEXT Param2;
-	ARRAY_TEXT Param3i;
-	ARRAY_TEXT Param3o;
+	C_TEXT Param3i;
+	C_TEXT Param3o;
 	C_LONGINT returnValue;
 
+	JSONNODE *arr = json_new(JSON_ARRAY);
+	
 	lha_error_t lha_error = lha_error_none;
 	
 	Param1.fromParamAtIndex(pParams, 1);
 	Param2.fromParamAtIndex(pParams, 2);
-	
 	Param3i.fromParamAtIndex(pParams, 3);
 	
 	CUTF8String src;
@@ -112,6 +131,7 @@ void LHA(sLONG_PTR *pResult, PackagePtr pParams)
 	options.dry_run = 0;
 	options.extract_path = (char *)dst.c_str();
 	options.use_path = 1;
+	
 #if VERSIONWIN
 	FILE *fstream = NULL;
 	wchar_t	buf[_MAX_PATH];
@@ -129,28 +149,48 @@ void LHA(sLONG_PTR *pResult, PackagePtr pParams)
 			LHAReader *reader = lha_reader_new(stream);
 			if(reader)
 			{
+				LHAFilter filter;
+				filter.num_filters = 0;
+				filter.reader = reader;
+				filter.filters = NULL;
+				
+				std::vector<CUTF8String>_filters;
+				std::vector<char *>filters;
 				unsigned int num_filters = 0;
-				size_t count_filters = Param3i.getSize();
 				
-				std::vector<CUTF8String>_filters(count_filters);
-				std::vector<char *>filters(count_filters);
+				JSONNODE *params = json_parse(Param3i);
 				
-				for(uint32_t i = 0; i < count_filters;++i)
+				if(params)
 				{
-					Param3i.copyUTF8StringAtIndex(&_filters.at(i), i);
-					if(_filters.at(i).size())
+					if (json_type(params) == JSON_ARRAY)
 					{
-						filters.at(num_filters++) = (char *)_filters.at(i).c_str();
-					};
+						JSONNODE_ITERATOR i = json_begin(params);
+						while (i != json_end(params))
+						{
+							json_char *str = json_as_string(*i);
+							if(str)
+							{
+								CUTF8String u8;
+								json_wconv(str, &u8);
+								_filters.push_back(u8);
+								filters.push_back((char *)_filters.back().c_str());
+								json_free(str);
+							}
+							
+							++i;num_filters++;
+						}
+						if(num_filters)
+						{
+							lha_filter_init(&filter, reader, &filters[0], num_filters);
+						}
+	
+					}
+					json_delete(params);
 				}
 				
-				LHAFilter filter;
-				lha_filter_init(&filter, reader, &filters[0], num_filters);
+				void (*_PA_YieldAbsolute)(void) = PA_YieldAbsolute2;
 				
-				void (*_PA_YieldAbsolute)(void) = PA_YieldAbsolute;
-				Param3o.setSize(1);
-				
-				if(!extract_archive(&filter, &options, _PA_YieldAbsolute, _cb, &Param3o))
+				if(!extract_archive(&filter, &options, _PA_YieldAbsolute, _cb2, arr))
 				{
 					lha_error = lha_error_extract_archive;
 				}
@@ -161,6 +201,9 @@ void LHA(sLONG_PTR *pResult, PackagePtr pParams)
 		}else{lha_error = lha_error_input_stream_from_file;}
 		fclose(fstream);
 	}else{lha_error = lha_error_fopen;};
+	
+	json_stringify(arr, Param3o);
+	json_delete(arr);
 	
 	Param3o.toParamAtIndex(pParams, 3);
 	

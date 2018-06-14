@@ -12,6 +12,8 @@
 #include "options.h"
 #include "filter.h"
 #include "extract.h"
+#include "libjson.h"
+#include "libjson_methods.h"
 
 // --- lha
 void LHA(sLONG_PTR *pResult, PackagePtr pParams);
