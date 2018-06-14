@@ -17,13 +17,13 @@ Decompress LZH
 
 [2.0](https://github.com/miyako/4d-plugin-lha/releases/tag/2.0)
 
+``$3`` has been changed from ``ARRAY TEXT`` to ``TEXT`` in this version for ``threadSafe``
+
 [1.0](https://github.com/miyako/4d-plugin-lha/releases/tag/1.0)
 
 ### Remarks
 
 Unicode paths on Windows is not supported (ANSI API is used for ``fopen``, ``CreateDirectoryA``, etc.)
-
-``$3`` has been changed from ``ARRAY TEXT`` to ``TEXT`` in this version for ``threadSafe``
 
 ## Syntax
 
