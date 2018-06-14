@@ -15,11 +15,15 @@ Decompress LZH
 
 ### Releases
 
+[2.0](https://github.com/miyako/4d-plugin-lha/releases/tag/2.0)
+
 [1.0](https://github.com/miyako/4d-plugin-lha/releases/tag/1.0)
 
 ### Remarks
 
 Unicode paths on Windows is not supported (ANSI API is used for ``fopen``, ``CreateDirectoryA``, etc.)
+
+``$3`` has been changed from ``ARRAY TEXT`` to ``TEXT`` in this version for ``threadSafe``
 
 ## Syntax
 
@@ -31,13 +35,13 @@ Parameter|Type|Description
 ------------|------------|----
 src|TEXT|
 dst|TEXT|
-paths|ARRAY TEXT|on input, ``glob`` style filters; on output, extracted paths
+paths|TEXT|on input, ``glob`` style filters; on output, extracted paths
 
 All paths in system style (HFS on macOS).
 
 Source (i.e. not target) path is returned for symbolic links.
 
-### Examples
+### Examples (v1)
 
 ```
 $src:=Get 4D folder(Current resources folder)+"sample-lzh.lzh"
