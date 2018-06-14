@@ -48,8 +48,8 @@ void CommandDispatcher (PA_long32 pProcNum, sLONG_PTR *pResult, PackagePtr pPara
 void copyPath(char *filename, CUTF16String *path)
 {
 	/* convert to HFS */
-#if VERSIONMAC
 	C_TEXT t;
+#if VERSIONMAC
 	t.setUTF8String((const uint8_t *)filename, (uint32_t)strlen(filename));
 	NSString *s = t.copyUTF16String();
 	NSURL *u = (NSURL *)CFURLCreateWithFileSystemPath(kCFAllocatorDefault, (CFStringRef)s, kCFURLPOSIXPathStyle, false);
