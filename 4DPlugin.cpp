@@ -85,12 +85,12 @@ void PA_YieldAbsolute2()
 
 void _cb2(char *filename, void *array)
 {
-	JSONNODE *arr = (JSONNODE *)array;
+	Json::Value *arr = (Json::Value *)array;
 	
 	CUTF16String path;
 	copyPath(filename, &path);
 	
-	json_push_back_s(arr, &path);
+	arr->append(Json::Value(json_bridge_to_utf8(&path)));
 }
 
 typedef enum
@@ -111,7 +111,7 @@ void LHA(sLONG_PTR *pResult, PackagePtr pParams)
 	C_TEXT Param3o;
 	C_LONGINT returnValue;
 
-	JSONNODE *arr = json_new(JSON_ARRAY);
+	Json::Value arr(Json::arrayValue);
 	
 	lha_error_t lha_error = lha_error_none;
 	
@@ -157,51 +157,47 @@ void LHA(sLONG_PTR *pResult, PackagePtr pParams)
 					filter.reader = reader;
 					filter.filters = NULL;
 					
-					std::vector<CUTF8String>_filters;
+					std::vector<std::string>_filters;
 					std::vector<char *>filters;
 					
-					JSONNODE *params = json_parse(Param3i);
+					Json::Value params = json_bridge_parse(Param3i);
 					
-					if(params)
+					if(params.isArray())
 					{
-						if (json_type(params) == JSON_ARRAY)
+						for(Json::ArrayIndex idx = 0; idx < params.size(); idx++)
 						{
-							JSONNODE_ITERATOR i = json_begin(params);
-							while (i != json_end(params))
+							const Json::Value &element = params[idx];
+							if(element.isString())
 							{
-								json_char *str = json_as_string(*i);
-								if(str)
-								{
-									CUTF8String u8;
-									json_wconv(str, &u8);
-									_filters.push_back(u8);
-									json_free(str);
-								}
-								
-								++i;
+								_filters.push_back(element.asString());
 							}
-							/* Build the char* array only after _filters has
-							   finished growing, so no c_str() pointer is taken
-							   before a later push_back could reallocate the
-							   vector out from under it. Size comes straight
-							   from _filters.size(), so it can never diverge
-							   from the number of entries actually stored. */
-							for(size_t f = 0; f < _filters.size(); f++)
-							{
-								filters.push_back((char *)_filters[f].c_str());
-							}
-							if(!filters.empty())
-							{
-								lha_filter_init(&filter, reader, &filters[0], (unsigned int)filters.size());
-							}
-	
+							/* Non-string elements (numbers, null, nested
+							   arrays/objects) are silently skipped - same as
+							   the original code's `if(str)` guard, but here
+							   nothing is ever appended to filters for a
+							   skipped element in the first place, so there's
+							   no separate counter that can drift out of sync
+							   with the vector's real size. */
 						}
-						json_delete(params);
+						/* Build the char* array only after _filters has
+						   finished growing, so no c_str() pointer is taken
+						   before a later push_back could reallocate the
+						   vector out from under it. Size comes straight
+						   from _filters.size(), so it can never diverge
+						   from the number of entries actually stored. */
+						for(size_t f = 0; f < _filters.size(); f++)
+						{
+							filters.push_back((char *)_filters[f].c_str());
+						}
+						if(!filters.empty())
+						{
+							lha_filter_init(&filter, reader, &filters[0], (unsigned int)filters.size());
+						}
 					}
 					
 					void (*_PA_YieldAbsolute)(void) = PA_YieldAbsolute2;
 					
-					if(!extract_archive(&filter, &options, _PA_YieldAbsolute, _cb2, arr))
+					if(!extract_archive(&filter, &options, _PA_YieldAbsolute, _cb2, &arr))
 					{
 						lha_error = lha_error_extract_archive;
 					}
@@ -227,8 +223,7 @@ void LHA(sLONG_PTR *pResult, PackagePtr pParams)
 		lha_error = lha_error_exception;
 	}
 	
-	json_stringify(arr, Param3o);
-	json_delete(arr);
+	json_bridge_stringify(arr, Param3o);
 	
 	Param3o.toParamAtIndex(pParams, 3);
 	
