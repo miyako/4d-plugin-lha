@@ -1,0 +1,5 @@
+.vs/*
+lha.4dbase/Plugins/lha.bundle/Contents/Windows64/lha.exp
+lha.4dbase/Plugins/lha.bundle/Contents/Windows64/lha.lib
+lha.vcxproj.user
+Objs/*
