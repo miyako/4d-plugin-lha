@@ -1,2 +1,0 @@
-Target dependency graph (1 target)
-Target 'lha' in project 'lha' (no dependencies)
