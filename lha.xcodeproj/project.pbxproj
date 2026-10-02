@@ -70,6 +70,7 @@
 		D1CBFB64206A1E51004F7AA6 /* safe.c in Sources */ = {isa = PBXBuildFile; fileRef = D1CBFB63206A1E51004F7AA6 /* safe.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		D1CBFB66206A1E70004F7AA6 /* safe.h in Headers */ = {isa = PBXBuildFile; fileRef = D1CBFB65206A1E70004F7AA6 /* safe.h */; };
 		D1CBFB68206A1EAE004F7AA6 /* lha_arch_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = D1CBFB67206A1EAE004F7AA6 /* lha_arch_unix.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		896339A8FE13A7362C5E80B1 /* constants.xlf in CopyFiles */ = {isa = PBXBuildFile; fileRef = D14D10DD1A03A8A5008B3411 /* constants.xlf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -80,6 +81,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				D134D4AC1A030BA0008D14EF /* manifest.json in CopyFiles */,
+				896339A8FE13A7362C5E80B1 /* constants.xlf in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
